@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { convertToFlattenedData } from '../utils/treeDataConverter';
+import { processCheckingItem } from '../utils/treeCheckingHandler';
+import MultipleSelectList from './MultipleSelectList';
 
 const MultipleSelectContainer = (props) => {
   const {
@@ -18,6 +20,13 @@ const MultipleSelectContainer = (props) => {
   } = props;
 
   const [flattenedDataSource, setFlattenedDataSource] = useState([]);
+
+  const handleOnChange = (item) => {
+    const handleChecking = processCheckingItem(item, cascadeChecking);
+    const newDataSource = handleChecking(flattenedDataSource);
+
+    setFlattenedDataSource(newDataSource);
+  };
 
   useEffect(() => {
     const data = needToConvertEntry
@@ -47,12 +56,10 @@ const MultipleSelectContainer = (props) => {
   ]);
 
   return (
-    <div>
-      <ul>
-        {flattenedDataSource.map((x) => {
-          return <li>{JSON.stringify(x)}</li>;
-        })}
-      </ul>
+    <div className="multiple-select-container">
+      <div className="multiple-select-default multiple-select-options-container" style={{ display: 'block' }}>
+        <MultipleSelectList dataSource={flattenedDataSource} onChange={handleOnChange} />
+      </div>
     </div>
   );
 };
